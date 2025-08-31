@@ -26,49 +26,26 @@
 Image *readData(char *filename) 
 {
 	//YOUR CODE HERE
-	FILE *fp = fopen(filename, "r");
-	if(fp == NULL) return NULL;
-
 	char format[20];
-	uint32_t cols, rows, range;
-	fscanf(fp, "%s %u %u %u", format, &cols, &rows, &range);
+	uint32_t range;
 
-	Color **colorImage = (Color **)malloc(rows * sizeof(Color *));
-	if(colorImage == NULL) return NULL;
-
-	for(uint32_t i = 0; i < rows; i++)
-	{
-		colorImage[i] = (Color *)malloc(cols * sizeof(Color));
-		if(colorImage[i] == NULL)
-		{
-			for(uint32_t j = 0; j < i; j++)
-			{
-				free(colorImage[j]);
-			}
-			free(colorImage);
-			return NULL;
-		}
-
-		for(uint32_t j = 0; j < cols; j++)
-		{
-			fscanf(fp, "%hhu %hhu %hhu", &colorImage[i][j].R, &colorImage[i][j].G, &colorImage[i][j].B);
-		}
-	}
+	FILE *fp = fopen(filename, "r");
 
 	Image *image = (Image *)malloc(sizeof(Image));
-	if(image == NULL)
-	{
-        for(uint32_t i = 0; i < rows; i++)
-		{
-            free(colorImage[i]);
-        }
-        free(colorImage);
-        return NULL;
-	}
 
-	image->image = colorImage;
-	image->rows = rows;
-	image->cols = cols;
+	fscanf(fp, "%s %u %u %u", format, &image->cols, &image->rows, &range);
+
+	image->image = (Color **)malloc(image->rows * sizeof(Color *));
+
+	for(uint32_t i = 0; i < image->rows; i++)
+	{
+		image->image[i] = (Color *)malloc(image->cols * sizeof(Color));
+
+		for(uint32_t j = 0; j < image->cols; j++)
+		{
+			fscanf(fp, "%hhu %hhu %hhu", &image->image[i][j].R, &image->image[i][j].G, &image->image[i][j].B);
+		}
+	}
 
 	fclose(fp);
 

@@ -23,7 +23,6 @@ Color *evaluateOnePixel(Image *image, int row, int col)
 {
 	//YOUR CODE HERE
 	Color *color = (Color *)malloc(sizeof(Color));
-	if(color == NULL) return NULL;
 
 	if((image->image[row][col].B & 0x1) == 0)
 	{
@@ -45,44 +44,17 @@ Color *evaluateOnePixel(Image *image, int row, int col)
 Image *steganography(Image *image)
 {
 	//YOUR CODE HERE
-	uint32_t rows = image->rows;
-	uint32_t cols = image->cols;
-
-	Color **colorImage = (Color **)malloc(rows * sizeof(Color *));
-	if(colorImage == NULL) return NULL;
-
-	for(uint32_t i = 0; i < rows; i++)
-	{
-		colorImage[i] = (Color *)malloc(cols * sizeof(Color));
-		if(colorImage[i] == NULL)
-		{
-			for(uint32_t j = 0; j < i; j++)
-			{
-				free(colorImage[j]);
-			}
-			free(colorImage);
-			return NULL;
-		}
-	}
-
 	Image *newImage = (Image *)malloc(sizeof(Image));
-	if(newImage == NULL)
-	{
-        for(uint32_t i = 0; i < rows; i++)
-		{
-            free(colorImage[i]);
-        }
-        free(colorImage);
-        return NULL;
-	}
 
-	newImage->image = colorImage;
-	newImage->rows = rows;
-	newImage->cols = cols;
+	newImage->image = (Color **)malloc(image->rows * sizeof(Color *));
+	newImage->rows = image->rows;
+	newImage->cols = image->cols;
 
-	for(uint32_t i = 0; i < rows; i++)
+	for(uint32_t i = 0; i < image->rows; i++)
 	{
-		for(uint32_t j = 0; j < cols; j++)
+		newImage->image[i] = (Color *)malloc(image->cols * sizeof(Color));
+
+		for(uint32_t j = 0; j < image->cols; j++)
 		{
 			Color *tempColor = evaluateOnePixel(image, i, j);
 			newImage->image[i][j] = *tempColor;
