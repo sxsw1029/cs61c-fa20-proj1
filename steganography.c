@@ -84,7 +84,9 @@ Image *steganography(Image *image)
 	{
 		for(uint32_t j = 0; j < cols; j++)
 		{
-			newImage->image[i][j] = *evaluateOnePixel(image, i, j);
+			Color *tempColor = evaluateOnePixel(image, i, j);
+			newImage->image[i][j] = *tempColor;
+			free(tempColor);
 		}
 	}
 
